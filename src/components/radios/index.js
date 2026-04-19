@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 
 function Radios({ data }) {
-  const [heart, setHeart] = useState(true);
+  const [heart, setHeart] = useState(null);
 
   function favoritar() {
     setHeart(!heart);
@@ -12,6 +12,9 @@ function Radios({ data }) {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.containerNameRadio}>
+        <View style={styles.areaLogo}>
+          <Image style={styles.logoRadio} source={{ uri: data.image }} />
+        </View>
         <Text>{data.name}</Text>
       </TouchableOpacity>
 
@@ -41,6 +44,24 @@ const styles = StyleSheet.create({
 
   containerNameRadio: {
     width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  areaLogo: {
+    width: 80,
+    height: 80,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 8,
+    marginRight: 16,
+  },
+
+  logoRadio: {
+    width: 50,
+    height: 50,
+    objectFit: "contain",
+    marginRight: 16,
   },
 });
 export default Radios;
