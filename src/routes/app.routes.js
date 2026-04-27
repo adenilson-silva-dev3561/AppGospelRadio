@@ -7,9 +7,13 @@ import profile from "../page/profile";
 import Favorites from "../page/favorites";
 import Search from "../page/search";
 import Profile from "../page/profile";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Player from "../page/playerScreen";
 
 const Tab = createBottomTabNavigator();
-function AppRoutes() {
+const Stack = createNativeStackNavigator();
+
+function TabRoutes() {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -33,7 +37,7 @@ function AppRoutes() {
         }}
       />
       <Tab.Screen
-        name="Favorites"
+        name="Favoritos"
         component={Favorites}
         options={{
           headerShown: false,
@@ -53,6 +57,22 @@ function AppRoutes() {
         }}
       />
     </Tab.Navigator>
+  );
+}
+function AppRoutes() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Tabs"
+        component={TabRoutes}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Player"
+        component={Player}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
   );
 }
 

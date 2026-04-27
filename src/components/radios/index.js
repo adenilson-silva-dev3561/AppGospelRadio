@@ -2,16 +2,21 @@ import React, { useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 function Radios({ data }) {
   const [heart, setHeart] = useState(null);
 
+  const navigation = useNavigation();
   function favoritar() {
     setHeart(!heart);
   }
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.containerNameRadio}>
+      <TouchableOpacity
+        style={styles.containerNameRadio}
+        onPress={() => navigation.navigate("Player")}
+      >
         <View style={styles.areaLogo}>
           <Image style={styles.logoRadio} source={{ uri: data.image }} />
         </View>

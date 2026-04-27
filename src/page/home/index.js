@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, StatusBar } from "react-native";
 import Header from "../../components/header";
 import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
@@ -72,6 +72,7 @@ function Home() {
   ];
   return (
     <View style={styles.container}>
+      <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
       <Header />
       <View style={styles.containerDestaque}>
         <Text style={{ fontSize: 18, fontWeight: "bold", top: 16 }}>
