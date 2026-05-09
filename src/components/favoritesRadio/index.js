@@ -40,17 +40,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    elevation: 2,
-    backgroundColor: "#ffffff",
+    backgroundColor: "transparent",
     padding: 4,
-    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#747171",
     marginTop: 8,
+    borderRadius: 10,
   },
 
   containerNameRadio: {
     width: "90%",
     flexDirection: "row",
     alignItems: "center",
+    borderRadius: 4,
   },
 
   areaLogo: {
@@ -65,7 +67,8 @@ const styles = StyleSheet.create({
   logoRadio: {
     width: 50,
     height: 50,
-    objectFit: "contain",
+    borderRadius: 100,
+    objectMode: "contain",
     marginRight: 16,
   },
 });
