@@ -8,10 +8,37 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import GoBack from "../../components/goBack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAudioPlayer } from "expo-audio";
 
-function Player() {
-  const [play, setPlay] = useState(true);
+function Player({ route }) {
+  const { radio, autoPlay } = route.params;
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const streamUrl = radio.url_resolved || radio.url;
+
+  const player = useAudioPlayer({
+    uri: streamUrl,
+  });
+
+  useEffect(() => {
+    if (autoPlay && streamUrl) {
+      player.play();
+      setIsPlaying(true);
+    }
+  }, []);
+
+  function handlePlayPause() {
+    if (isPlaying) {
+      player.pause();
+      setIsPlaying(false);
+      return;
+    } else {
+      player.play();
+      setIsPlaying(true);
+    }
+  }
   return (
     <LinearGradient
       colors={["#0F9D7A", "#02241c", "#000000"]}
@@ -32,7 +59,7 @@ function Player() {
         >
           <Feather name="radio" size={100} color={"#fff"} />
           <Text style={{ fontSize: 30, fontWeight: "bold", color: "#fff" }}>
-            FM Gospel
+            {radio.name?.substring(0, 8)}
           </Text>
 
           <Text style={{ fontSize: 18, fontWeight: "100", color: "#fff" }}>
@@ -54,11 +81,12 @@ function Player() {
           <TouchableOpacity>
             <Feather name="heart" size={40} color={"#fa2c2c"} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.buttonPlay}
-            onPress={() => setPlay(!play)}
-          >
-            <Feather name={play ? "play" : "pause"} size={40} color={"#fff"} />
+          <TouchableOpacity style={styles.buttonPlay} onPress={handlePlayPause}>
+            <Feather
+              name={isPlaying ? "play" : "pause"}
+              size={40}
+              color={"#fff"}
+            />
           </TouchableOpacity>
           <TouchableOpacity>
             <Feather name="share-2" size={40} color={"#fff"} />

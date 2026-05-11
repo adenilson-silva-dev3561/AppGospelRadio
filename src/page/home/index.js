@@ -12,6 +12,7 @@ function Home() {
     radiosApi();
   }, []);
 
+  console.log(radios);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />

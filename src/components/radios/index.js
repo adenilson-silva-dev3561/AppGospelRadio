@@ -1,21 +1,27 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { ContextApi } from "../../contexts/radios";
 
-function Radios({ data }) {
-  const [heart, setHeart] = useState(null);
+function Radios({ data, autoPlay }) {
+  const [heart, setHeart] = useState(false);
+  const { isPlaying, setIsPlaying } = useContext(ContextApi);
 
   const navigation = useNavigation();
   function favoritar() {
     setHeart(!heart);
   }
+
+  function screenPlayer() {
+    navigation.navigate("Player", { radio: data, autoPlay: true });
+  }
   return (
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.containerNameRadio}
-        onPress={() => navigation.navigate("Player")}
+        onPress={screenPlayer}
       >
         <View style={styles.areaLogo}>
           <Image

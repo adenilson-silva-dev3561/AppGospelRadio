@@ -15,6 +15,7 @@ function ApiProvider({ children }) {
           limit: 75,
         },
       });
+
       setRadios(response.data);
     } catch (err) {
       console.log("Erro ao buscar dados da api: ", err);
