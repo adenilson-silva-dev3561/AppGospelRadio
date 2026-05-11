@@ -18,7 +18,14 @@ function Radios({ data }) {
         onPress={() => navigation.navigate("Player")}
       >
         <View style={styles.areaLogo}>
-          <Image style={styles.logoRadio} source={{ uri: data.image }} />
+          <Image
+            style={styles.logoRadio}
+            source={
+              data.favicon !== ""
+                ? { uri: data.favicon }
+                : require("../../../assets/iconRadio.png")
+            }
+          />
         </View>
         <Text>{data.name}</Text>
       </TouchableOpacity>
