@@ -1,86 +1,96 @@
-import React, { useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import { api } from "../services/api";
+import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
 
-import { Feather } from "@expo/vector-icons";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+export const ContextApi = createContext({});
 
-import { useNavigation } from "@react-navigation/native";
+function ApiProvider({ children }) {
+  const [radios, setRadios] = useState([]);
+  const [playing, setPlaying] = useState(false);
+  const [currentRadio, setCurrentRadio] = useState(null);
 
-function Radios({ data }) {
-  const [heart, setHeart] = useState(false);
+  const player = useAudioPlayer();
 
-  const navigation = useNavigation();
+  useEffect(() => {
+    async function setupAudio() {
+      await setAudioModeAsync({
+        shouldPlayInBackground: true,
+      });
+    }
 
-  function favoritar() {
-    setHeart(!heart);
+    setupAudio();
+  }, []);
+
+  async function radiosApi() {
+    try {
+      const response = await api.get("/stations/search", {
+        params: {
+          tag: "gospel",
+          country: "Brazil",
+          hidebroken: true,
+          limit: 75,
+        },
+      });
+
+      setRadios(response.data);
+    } catch (err) {
+      console.log("Erro ao buscar dados da api: ", err);
+    }
   }
 
-  function screenPlayer() {
-    navigation.navigate("Player", {
-      radio: data,
-      autoPlay: true,
-    });
+  async function playRadio(radio) {
+    try {
+      const url = radio.urlResolved || radio.url_resolved;
+
+      // mesma rádio
+      if (currentRadio?.stationuuid === radio.stationuuid) {
+        if (playing) {
+          player.pause();
+          setPlaying(false);
+        } else {
+          player.play();
+          setPlaying(true);
+        }
+
+        return;
+      }
+
+      // pausa rádio anterior
+      player.pause();
+
+      // troca stream
+      player.replace({
+        uri: url,
+      });
+
+      // toca nova rádio
+      player.play();
+
+      setCurrentRadio(radio);
+      setPlaying(true);
+    } catch (err) {
+      console.log(err);
+      alert("Erro ao reproduzir áudio");
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.containerNameRadio}
-        onPress={screenPlayer}
-      >
-        <View style={styles.areaLogo}>
-          <Image
-            style={styles.logoRadio}
-            source={
-              data.favicon
-                ? { uri: data.favicon }
-                : require("../../../assets/iconRadio.png")
-            }
-          />
-        </View>
+    <ContextApi.Provider
+      value={{
+        radios,
+        radiosApi,
 
-        <Text>{data.name}</Text>
-      </TouchableOpacity>
+        playing,
+        setPlaying,
 
-      <TouchableOpacity onPress={favoritar}>
-        <Feather name="heart" size={30} color={heart ? "red" : "#dcdcdc"} />
-      </TouchableOpacity>
-    </View>
+        currentRadio,
+
+        playRadio,
+      }}
+    >
+      {children}
+    </ContextApi.Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    elevation: 2,
-    backgroundColor: "#ffffff",
-    padding: 4,
-    borderRadius: 10,
-    marginTop: 8,
-  },
-
-  containerNameRadio: {
-    width: "90%",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  areaLogo: {
-    width: 80,
-    height: 80,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 8,
-    marginRight: 16,
-  },
-
-  logoRadio: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-  },
-});
-
-export default Radios;
+export default ApiProvider;
