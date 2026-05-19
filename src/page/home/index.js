@@ -6,40 +6,42 @@ import Radios from "../../components/radios";
 import { ContextApi } from "../../contexts/radios";
 
 function Home() {
-  const { radios, radiosApi } = useContext(ContextApi);
+  const { radios, radiosApi, currentRadio } = useContext(ContextApi);
 
   useEffect(() => {
     radiosApi();
   }, []);
 
-  console.log(radios);
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
+
       <Header />
+
       <View style={styles.containerDestaque}>
         <Text style={{ fontSize: 18, fontWeight: "bold", top: 16 }}>
           Ouvindo agora:
         </Text>
+
         <View style={styles.continerTocandoAgora}>
           <View style={styles.areaIcon}>
             <Feather name="radio" size={80} color={"#fff"} />
           </View>
+
           <View style={styles.areaInfoMusica}>
             <View style={styles.containerTitleRadio}>
-              <Text style={styles.nameRadio}>Gospel FM ao vivo</Text>
-            </View>
-            <View style={styles.containerNameMusicTocando}>
-              <Text style={styles.nameMusic}>
-                <Text style={{ fontWeight: "bold" }}>Tocando agora:</Text>{" "}
-                Felipe Rodrigues - Tudo é Perda{" "}
+              <Text style={styles.nameRadio}>
+                {currentRadio?.name || "Nenhuma rádio tocando"}
               </Text>
+            </View>
+
+            <View style={styles.containerNameMusicTocando}>
+              <Text style={styles.nameMusic}>Rádio gospel online ao vivo</Text>
             </View>
           </View>
         </View>
       </View>
 
-      {/* todas as radios */}
       <View style={styles.containerRadios}>
         <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
           Todas as rádios:
@@ -47,8 +49,8 @@ function Home() {
 
         <FlatList
           data={radios}
+          keyExtractor={(item) => item.stationuuid}
           showsVerticalScrollIndicator={false}
-          key={({ item }) => item.id}
           renderItem={({ item }) => <Radios data={item} />}
         />
       </View>
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
   containerDestaque: {
     width: "95%",
   },
+
   continerTocandoAgora: {
     height: 100,
     flexDirection: "row",
@@ -82,15 +85,15 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 10,
     marginRight: 16,
+    justifyContent: "center",
+    alignItems: "center",
     elevation: 4,
     backgroundColor: "#8de2bf",
   },
 
-  containerTitleRadio: {},
   areaInfoMusica: {
     width: "70%",
     padding: 4,
-    borderBottomColor: "#8de2bf",
   },
 
   containerNameMusicTocando: {
@@ -99,11 +102,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
     paddingTop: 4,
   },
+
   nameRadio: {
     fontSize: 20,
     fontWeight: "800",
     color: "#285240",
   },
+
   nameMusic: {
     fontSize: 12,
   },

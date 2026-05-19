@@ -33,7 +33,6 @@ function Favorites() {
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
       style={styles.container}
-      style={styles.container}
     >
       <FavoriteHeader />
       <View style={styles.containerFavorites}>
