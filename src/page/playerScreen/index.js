@@ -8,37 +8,39 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import GoBack from "../../components/goBack";
-import { useEffect, useState } from "react";
-import { useAudioPlayer } from "expo-audio";
+import { useContext, useEffect, useRef } from "react";
+import LottieView from "lottie-react-native";
+import { ContextApi } from "../../contexts/radios";
 
 function Player({ route }) {
   const { radio, autoPlay } = route.params;
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { playRadio, playing, currentRadio } = useContext(ContextApi);
 
-  const streamUrl = radio.url_resolved || radio.url;
+  const animation = useRef(null);
 
-  const player = useAudioPlayer({
-    uri: streamUrl,
-  });
+  const isCurrentRadio = currentRadio?.stationuuid === radio.stationuuid;
 
+  // autoplay ao abrir tela
   useEffect(() => {
-    if (autoPlay && streamUrl) {
-      player.play();
-      setIsPlaying(true);
+    if (autoPlay) {
+      playRadio(radio);
     }
   }, []);
 
-  function handlePlayPause() {
-    if (isPlaying) {
-      player.pause();
-      setIsPlaying(false);
-      return;
+  // controlar animação
+  useEffect(() => {
+    if (isCurrentRadio && playing) {
+      animation.current?.play();
     } else {
-      player.play();
-      setIsPlaying(true);
+      animation.current?.pause();
     }
+  }, [playing, currentRadio]);
+
+  function handlePlayPause() {
+    playRadio(radio);
   }
+
   return (
     <LinearGradient
       colors={["#0F9D7A", "#02241c", "#000000"]}
@@ -47,50 +49,52 @@ function Player({ route }) {
       style={styles.container}
     >
       <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
-      <GoBack />
-      <View style={styles.areaPlayer}>
-        {/* aqui pode ser um header comnome da emissora */}
 
+      <GoBack />
+
+      <View style={styles.areaPlayer}>
         <LinearGradient
           colors={["#154136", "#154136", "#0a221c"]}
           start={{ x: 0.6, y: 0 }}
           end={{ x: 0.6, y: 1 }}
           style={styles.areaLogo}
         >
-          <Feather name="radio" size={100} color={"#fff"} />
-          <Text style={{ fontSize: 30, fontWeight: "bold", color: "#fff" }}>
-            {radio.name?.substring(0, 8)}
-          </Text>
+          <LottieView
+            source={require("../../../assets/Live.json")}
+            style={styles.lottie}
+            ref={animation}
+            autoPlay
+            loop
+          />
 
-          <Text style={{ fontSize: 18, fontWeight: "100", color: "#fff" }}>
-            O Som da Vida.
-          </Text>
+          <Text style={styles.radioName}>{radio.name}</Text>
 
           <View style={styles.aoVivo}>
             <Feather name="radio" size={20} color={"#ff0000"} />
-            <Text style={{ color: "#fff", fontWeight: "300", marginLeft: 8 }}>
-              AO VIVO
-            </Text>
+
+            <Text style={styles.textAoVivo}>AO VIVO</Text>
           </View>
         </LinearGradient>
 
-        <Text style={styles.titleMusic}>Felipe Rodrigues - Tudo é Perda.</Text>
         <Text style={styles.textTransmitindo}>Transmitindo agora</Text>
 
         <View style={styles.reaButtons}>
           <TouchableOpacity>
             <Feather name="heart" size={40} color={"#fa2c2c"} />
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.buttonPlay} onPress={handlePlayPause}>
             <Feather
-              name={isPlaying ? "play" : "pause"}
+              name={isCurrentRadio && playing ? "pause" : "play"}
               size={40}
               color={"#fff"}
             />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Feather name="share-2" size={40} color={"#fff"} />
           </TouchableOpacity>
+
           <TouchableOpacity>
             <Feather name="volume-2" size={40} color={"#fff"} />
           </TouchableOpacity>
@@ -106,15 +110,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+
   areaPlayer: {
     height: "70%",
     alignItems: "center",
     justifyContent: "center",
   },
+
   areaLogo: {
     width: 250,
     height: 250,
     alignItems: "center",
+    justifyContent: "center",
     borderRadius: 20,
     elevation: 10,
   },
@@ -125,22 +132,31 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginTop: 20,
     flexDirection: "row",
+    alignItems: "center",
     paddingLeft: 8,
     elevation: 10,
     backgroundColor: "#000",
   },
 
-  titleMusic: {
-    fontSize: 20,
+  textAoVivo: {
     color: "#fff",
-    marginTop: 30,
-    marginBottom: 10,
+    fontWeight: "300",
+    marginLeft: 8,
   },
+
+  radioName: {
+    fontSize: 30,
+    fontWeight: "normal",
+    color: "#fff",
+    textAlign: "center",
+  },
+
   textTransmitindo: {
     fontSize: 20,
     fontStyle: "italic",
     fontWeight: "300",
     color: "#424141",
+    marginTop: 20,
   },
 
   reaButtons: {
@@ -150,6 +166,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 30,
   },
+
   buttonPlay: {
     width: 80,
     height: 80,
@@ -157,6 +174,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 100,
     backgroundColor: "rgba(30, 71, 51, 0.8)",
+  },
+
+  lottie: {
+    width: 100,
+    height: 100,
   },
 });
 
