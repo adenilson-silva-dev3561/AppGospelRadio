@@ -1,5 +1,6 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
+import { api } from "../services/api";
 
 export const ContextApi = createContext({});
 
@@ -71,7 +72,7 @@ function ApiProvider({ children }) {
       alert("Erro ao reproduzir áudio");
     }
   }
-
+  //
   return (
     <ContextApi.Provider
       value={{

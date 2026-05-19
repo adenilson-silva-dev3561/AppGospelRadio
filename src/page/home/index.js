@@ -7,7 +7,7 @@ import { ContextApi } from "../../contexts/radios";
 
 function Home() {
   const { radios, radiosApi } = useContext(ContextApi);
-  //
+
   useEffect(() => {
     radiosApi();
   }, []);
