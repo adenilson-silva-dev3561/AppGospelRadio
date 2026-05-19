@@ -1,22 +1,32 @@
 import React, { useContext, useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
+
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
+
 import { useNavigation } from "@react-navigation/native";
+
 import { ContextApi } from "../../contexts/radios";
 
-function Radios({ data, autoPlay }) {
+function Radios({ data }) {
   const [heart, setHeart] = useState(false);
-  const { isPlaying, setIsPlaying } = useContext(ContextApi);
 
   const navigation = useNavigation();
+
+  const { playRadio } = useContext(ContextApi);
+
   function favoritar() {
     setHeart(!heart);
   }
 
   function screenPlayer() {
-    navigation.navigate("Player", { radio: data, autoPlay: true });
+    playRadio(data);
+
+    navigation.navigate("Player", {
+      radio: data,
+    });
   }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -27,21 +37,18 @@ function Radios({ data, autoPlay }) {
           <Image
             style={styles.logoRadio}
             source={
-              data.favicon !== ""
+              data.favicon
                 ? { uri: data.favicon }
                 : require("../../../assets/iconRadio.png")
             }
           />
         </View>
+
         <Text>{data.name}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity onPress={favoritar}>
-        <Feather
-          name="heart"
-          size={30}
-          color={heart === true ? "red" : "#dcdcdc"}
-        />
+        <Feather name="heart" size={30} color={heart ? "red" : "#dcdcdc"} />
       </TouchableOpacity>
     </View>
   );
@@ -78,8 +85,8 @@ const styles = StyleSheet.create({
   logoRadio: {
     width: 50,
     height: 50,
-    objectFit: "contain",
-    marginRight: 16,
+    resizeMode: "contain",
   },
 });
+
 export default Radios;
