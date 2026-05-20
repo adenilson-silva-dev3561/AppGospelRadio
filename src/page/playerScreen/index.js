@@ -7,6 +7,7 @@ import { ContextApi } from "../../contexts/radios";
 function Radios({ data }) {
   const [heart, setHeart] = useState(false);
 
+  console.log(data);
   const navigation = useNavigation();
 
   function favoritar() {

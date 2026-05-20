@@ -1,6 +1,4 @@
-import React, { createContext, useEffect, useState } from "react";
-import { api } from "../services/api";
-import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 import { Feather } from "@expo/vector-icons";
 
@@ -38,11 +36,7 @@ function Radios({ data }) {
         <View style={styles.areaLogo}>
           <Image
             style={styles.logoRadio}
-            source={
-              data.favicon
-                ? { uri: data.favicon }
-                : require("../../../assets/iconRadio.png")
-            }
+            source={require("../../../assets/iconRadio.png")}
           />
         </View>
 
@@ -92,97 +86,3 @@ const styles = StyleSheet.create({
 });
 
 export default Radios;
-=======
-export const ContextApi = createContext({});
-
-function ApiProvider({ children }) {
-  const [radios, setRadios] = useState([]);
-  const [playing, setPlaying] = useState(false);
-  const [currentRadio, setCurrentRadio] = useState(null);
-
-  const player = useAudioPlayer();
-
-  useEffect(() => {
-    async function setupAudio() {
-      await setAudioModeAsync({
-        shouldPlayInBackground: true,
-      });
-    }
-
-    setupAudio();
-  }, []);
-
-  async function radiosApi() {
-    try {
-      const response = await api.get("/stations/search", {
-        params: {
-          tag: "gospel",
-          country: "Brazil",
-          hidebroken: true,
-          limit: 75,
-        },
-      });
-
-      setRadios(response.data);
-    } catch (err) {
-      console.log("Erro ao buscar dados da api: ", err);
-    }
-  }
-
-  async function playRadio(radio) {
-    try {
-      const url = radio.urlResolved || radio.url_resolved;
-
-      // mesma rádio
-      if (currentRadio?.stationuuid === radio.stationuuid) {
-        if (playing) {
-          player.pause();
-          setPlaying(false);
-        } else {
-          player.play();
-          setPlaying(true);
-        }
-
-        return;
-      }
-
-      // pausa rádio anterior
-      player.pause();
-
-      // troca stream
-      player.replace({
-        uri: url,
-      });
-
-      // toca nova rádio
-      player.play();
-
-      setCurrentRadio(radio);
-      setPlaying(true);
-    } catch (err) {
-      console.log(err);
-      alert("Erro ao reproduzir áudio");
-    }
-  }
-
-  return (
-    <ContextApi.Provider
-      value={{
-        radios,
-        radiosApi,
-
-        playing,
-        setPlaying,
-
-        currentRadio,
-
-        playRadio,
-      }}
-    >
-      {children}
-    </ContextApi.Provider>
-  );
-}
-
-export default ApiProvider;
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72

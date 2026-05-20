@@ -1,23 +1,16 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
 import { api } from "../services/api";
-import Player from "../page/playerScreen";
-import { useAudioPlayer } from "expo-audio";
 
-export const ContextApi = createContext({});
+export const ContextApi = createContext([]);
 
 function ApiProvider({ children }) {
-<<<<<<< HEAD
   const [radios, setRadios] = useState([]);
-=======
-  const [radios, setRadios] = useState([{}]);
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
   const [playing, setPlaying] = useState(false);
   const [currentRadio, setCurrentRadio] = useState(null);
 
   const player = useAudioPlayer();
 
-<<<<<<< HEAD
   useEffect(() => {
     async function setupAudio() {
       await setAudioModeAsync({
@@ -28,8 +21,6 @@ function ApiProvider({ children }) {
     setupAudio();
   }, []);
 
-=======
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
   async function radiosApi() {
     try {
       const response = await api.get("/stations/search", {
@@ -51,12 +42,7 @@ function ApiProvider({ children }) {
     try {
       const url = radio.urlResolved || radio.url_resolved;
 
-<<<<<<< HEAD
       // mesma rádio
-=======
-      // mesma radio clicada
-
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
       if (currentRadio?.stationuuid === radio.stationuuid) {
         if (playing) {
           player.pause();
@@ -69,10 +55,7 @@ function ApiProvider({ children }) {
         return;
       }
 
-<<<<<<< HEAD
       // pausa rádio anterior
-=======
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
       player.pause();
 
       // troca stream
@@ -80,47 +63,28 @@ function ApiProvider({ children }) {
         uri: url,
       });
 
-<<<<<<< HEAD
-=======
-      // toca nova
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
       player.play();
 
       setCurrentRadio(radio);
       setPlaying(true);
     } catch (err) {
-<<<<<<< HEAD
       console.log(err);
       alert("Erro ao reproduzir áudio");
     }
   }
-  //
-=======
-      alert("Erro ao reproduzir audio");
-    }
-  }
 
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
   return (
     <ContextApi.Provider
       value={{
         radios,
         radiosApi,
 
-<<<<<<< HEAD
-=======
-        playRadio,
-
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
         playing,
         setPlaying,
 
         currentRadio,
-<<<<<<< HEAD
 
         playRadio,
-=======
->>>>>>> 13d4af0d05cfb7aca584ed80c5b0b78ca7619d72
       }}
     >
       {children}
