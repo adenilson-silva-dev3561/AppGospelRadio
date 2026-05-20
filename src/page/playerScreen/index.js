@@ -1,86 +1,154 @@
-import React, { useContext, useState } from "react";
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import GoBack from "../../components/goBack";
+import React, { useContext, useEffect } from "react";
 import { ContextApi } from "../../contexts/radios";
 
-function Radios({ data }) {
-  const [heart, setHeart] = useState(false);
+function Player({ route }) {
+  const { currentRadio, playing, playRadio } = useContext(ContextApi);
+  const routeRadio = route.params?.radio;
+  const radio = routeRadio || currentRadio;
 
-  console.log(data);
-  const navigation = useNavigation();
+  useEffect(() => {
+    if (routeRadio?.stationuuid && route.params?.autoPlay) {
+      if (currentRadio?.stationuuid !== routeRadio.stationuuid) {
+        playRadio(routeRadio);
+      }
+    }
+  }, [routeRadio?.stationuuid, currentRadio?.stationuuid]);
 
-  function favoritar() {
-    setHeart(!heart);
+  function handlePlayPause() {
+    const radioToToggle = currentRadio || routeRadio;
+    if (!radioToToggle) return;
+
+    playRadio(radioToToggle);
   }
-
-  function screenPlayer() {
-    navigation.navigate("Player", {
-      radio: data,
-      autoPlay: true,
-    });
-  }
-
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.containerNameRadio}
-        onPress={screenPlayer}
-      >
-        <View style={styles.areaLogo}>
-          <Image
-            style={styles.logoRadio}
-            source={
-              data.favicon
-                ? { uri: data.favicon }
-                : require("../../../assets/iconRadio.png")
-            }
-          />
+    <LinearGradient
+      colors={["#0F9D7A", "#02241c", "#000000"]}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+      style={styles.container}
+    >
+      <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
+      <GoBack />
+      <View style={styles.areaPlayer}>
+        {/* aqui pode ser um header comnome da emissora */}
+
+        <LinearGradient
+          colors={["#154136", "#154136", "#0a221c"]}
+          start={{ x: 0.6, y: 0 }}
+          end={{ x: 0.6, y: 1 }}
+          style={styles.areaLogo}
+        >
+          <Feather name="radio" size={100} color={"#fff"} />
+          <Text style={{ fontSize: 30, fontWeight: "bold", color: "#fff" }}>
+            {radio.name?.substring(0, 8)}
+          </Text>
+
+          <Text style={{ fontSize: 18, fontWeight: "100", color: "#fff" }}>
+            O Som da Vida.
+          </Text>
+
+          <View style={styles.aoVivo}>
+            <Feather name="radio" size={20} color={"#ff0000"} />
+            <Text style={{ color: "#fff", fontWeight: "300", marginLeft: 8 }}>
+              AO VIVO
+            </Text>
+          </View>
+        </LinearGradient>
+
+        <Text style={styles.titleMusic}>Felipe Rodrigues - Tudo é Perda.</Text>
+        <Text style={styles.textTransmitindo}>Transmitindo agora</Text>
+
+        <View style={styles.reaButtons}>
+          <TouchableOpacity>
+            <Feather name="heart" size={40} color={"#fa2c2c"} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.buttonPlay} onPress={handlePlayPause}>
+            <Feather
+              name={playing ? "pause" : "play"}
+              size={40}
+              color={"#fff"}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Feather name="share-2" size={40} color={"#fff"} />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Feather name="volume-2" size={40} color={"#fff"} />
+          </TouchableOpacity>
         </View>
-
-        <Text>{data.name}</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={favoritar}>
-        <Feather name="heart" size={30} color={heart ? "red" : "#dcdcdc"} />
-      </TouchableOpacity>
-    </View>
+      </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "100%",
-    elevation: 2,
-    backgroundColor: "#ffffff",
-    padding: 4,
-    borderRadius: 10,
-    marginTop: 8,
-  },
-
-  containerNameRadio: {
-    width: "90%",
-    flexDirection: "row",
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
-
+  areaPlayer: {
+    height: "70%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   areaLogo: {
+    width: 250,
+    height: 250,
+    alignItems: "center",
+    borderRadius: 20,
+    elevation: 10,
+  },
+
+  aoVivo: {
+    width: "50%",
+    height: 20,
+    borderRadius: 20,
+    marginTop: 20,
+    flexDirection: "row",
+    paddingLeft: 8,
+    elevation: 10,
+    backgroundColor: "#000",
+  },
+
+  titleMusic: {
+    fontSize: 20,
+    color: "#fff",
+    marginTop: 30,
+    marginBottom: 10,
+  },
+  textTransmitindo: {
+    fontSize: 20,
+    fontStyle: "italic",
+    fontWeight: "300",
+    color: "#424141",
+  },
+
+  reaButtons: {
+    width: 300,
+    justifyContent: "space-around",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 30,
+  },
+  buttonPlay: {
     width: 80,
     height: 80,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 8,
-    marginRight: 16,
-  },
-
-  logoRadio: {
-    width: 50,
-    height: 50,
-    objectFit: "contain",
+    borderRadius: 100,
+    backgroundColor: "rgba(30, 71, 51, 0.8)",
   },
 });
 
-export default Radios;
+export default Player;

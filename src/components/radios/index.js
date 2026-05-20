@@ -1,29 +1,23 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-
+import React, { useContext, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
-
 import { useNavigation } from "@react-navigation/native";
-
 import { ContextApi } from "../../contexts/radios";
 
 function Radios({ data }) {
   const [heart, setHeart] = useState(false);
-
-  const navigation = useNavigation();
-
   const { playRadio } = useContext(ContextApi);
+  const navigation = useNavigation();
 
   function favoritar() {
     setHeart(!heart);
   }
 
-  function screenPlayer() {
-    playRadio(data);
-
+  async function screenPlayer() {
+    await playRadio(data);
     navigation.navigate("Player", {
       radio: data,
+      autoPlay: true,
     });
   }
 
@@ -36,7 +30,11 @@ function Radios({ data }) {
         <View style={styles.areaLogo}>
           <Image
             style={styles.logoRadio}
-            source={require("../../../assets/iconRadio.png")}
+            source={
+              data.favicon
+                ? { uri: data.favicon }
+                : require("../../../assets/iconRadio.png")
+            }
           />
         </View>
 
@@ -81,7 +79,7 @@ const styles = StyleSheet.create({
   logoRadio: {
     width: 50,
     height: 50,
-    resizeMode: "contain",
+    objectFit: "contain",
   },
 });
 
