@@ -2,7 +2,6 @@ import React, { createContext, useEffect, useState } from "react";
 import { api } from "../services/api";
 import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
 
-<<<<<<< HEAD
 import { Feather } from "@expo/vector-icons";
 
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
