@@ -41,7 +41,7 @@ function Radios({ data }) {
         <Text>{data.name}</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={favoritar}>
+      <TouchableOpacity onPress={favoritar} style={styles.areaFavoritar}>
         <Feather name="heart" size={30} color={heart ? "red" : "#dcdcdc"} />
       </TouchableOpacity>
     </View>
@@ -76,6 +76,9 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
 
+  areaFavoritar: {
+    right: 8,
+  },
   logoRadio: {
     width: 50,
     height: 50,

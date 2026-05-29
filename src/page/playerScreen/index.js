@@ -8,13 +8,24 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import GoBack from "../../components/goBack";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { ContextApi } from "../../contexts/radios";
+import LottieView from "lottie-react-native";
 
 function Player({ route }) {
   const { currentRadio, playing, playRadio } = useContext(ContextApi);
   const routeRadio = route.params?.radio;
   const radio = routeRadio || currentRadio;
+
+  const animation = useRef(null);
+
+  useEffect(() => {
+    if (playing) {
+      animation.current?.play();
+    } else {
+      animation.current?.pause();
+    }
+  }, [playing]);
 
   useEffect(() => {
     if (routeRadio?.stationuuid && route.params?.autoPlay) {
@@ -48,13 +59,24 @@ function Player({ route }) {
           end={{ x: 0.6, y: 1 }}
           style={styles.areaLogo}
         >
-          <Feather name="radio" size={100} color={"#fff"} />
-          <Text style={{ fontSize: 30, fontWeight: "bold", color: "#fff" }}>
-            {radio.name?.substring(0, 8)}
-          </Text>
+          <LottieView
+            ref={animation}
+            source={require("../../../assets/Live.json")}
+            autoPlay
+            loop
+            style={{ width: 150, height: 150 }}
+            resizeMode="cover"
+          />
 
-          <Text style={{ fontSize: 18, fontWeight: "100", color: "#fff" }}>
-            O Som da Vida.
+          <Text
+            style={{
+              fontSize: 30,
+              fontWeight: "bold",
+              color: "#fff",
+              textAlign: "center",
+            }}
+          >
+            {radio.name}
           </Text>
 
           <View style={styles.aoVivo}>
@@ -65,7 +87,6 @@ function Player({ route }) {
           </View>
         </LinearGradient>
 
-        <Text style={styles.titleMusic}>Felipe Rodrigues - Tudo é Perda.</Text>
         <Text style={styles.textTransmitindo}>Transmitindo agora</Text>
 
         <View style={styles.reaButtons}>
@@ -99,13 +120,15 @@ const styles = StyleSheet.create({
   },
   areaPlayer: {
     height: "70%",
+    padding: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   areaLogo: {
-    width: 250,
-    height: 250,
+    width: "100%",
     alignItems: "center",
+    justifyContent: "center",
+    padding: 4,
     borderRadius: 20,
     elevation: 10,
   },
@@ -115,9 +138,11 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 20,
     marginTop: 20,
+    alignItems: "center",
+    justifyContent: "center",
     flexDirection: "row",
-    paddingLeft: 8,
     elevation: 10,
+    bottom: 10,
     backgroundColor: "#000",
   },
 
