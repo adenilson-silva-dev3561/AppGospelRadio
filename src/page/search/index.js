@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   View,
   Text,
@@ -14,11 +14,18 @@ import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
 import { ContextApi } from "../../contexts/radios";
 import { useContext, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 function Search() {
-  const { radios } = useContext(ContextApi);
+  const { radios, input, setInput } = useContext(ContextApi);
   const [radioSearch, setRadioSearch] = useState([]);
-  const [input, setInput] = useState("");
+
+  useFocusEffect(
+    useCallback(() => {
+      setInput("");
+      setRadioSearch([]);
+    }, []),
+  );
 
   const regex = /^[A-Za-z0-9!@#$%^&*()_\-+={}[\]:;"'<>,.?/\\| ]+$/;
 
@@ -91,6 +98,7 @@ const styles = StyleSheet.create({
     width: "80%",
     fontSize: 18,
     marginRight: 8,
+    color: "#fff",
     outlineStyle: "none",
   },
 

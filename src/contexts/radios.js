@@ -8,6 +8,7 @@ function ApiProvider({ children }) {
   const [radios, setRadios] = useState([]);
   const [playing, setPlaying] = useState(false);
   const [currentRadio, setCurrentRadio] = useState(null);
+  const [input, setInput] = useState("");
 
   const player = useAudioPlayer();
 
@@ -85,6 +86,8 @@ function ApiProvider({ children }) {
         currentRadio,
 
         playRadio,
+        input,
+        setInput,
       }}
     >
       {children}

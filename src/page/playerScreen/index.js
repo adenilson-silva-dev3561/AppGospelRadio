@@ -125,7 +125,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   areaLogo: {
-    width: "100%",
+    width: 300,
+
     alignItems: "center",
     justifyContent: "center",
     padding: 4,

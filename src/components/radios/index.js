@@ -6,7 +6,7 @@ import { ContextApi } from "../../contexts/radios";
 
 function Radios({ data }) {
   const [heart, setHeart] = useState(false);
-  const { playRadio } = useContext(ContextApi);
+  const { playRadio, setInput } = useContext(ContextApi);
   const navigation = useNavigation();
 
   function favoritar() {
@@ -19,6 +19,8 @@ function Radios({ data }) {
       radio: data,
       autoPlay: true,
     });
+
+    setInput("");
   }
 
   return (
