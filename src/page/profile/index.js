@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 function Profile() {
   return (
     <LinearGradient
-      colors={["#0F9D7A", "#02241c", "#000000"]}
+      colors={["#0F9D7A", "#02241c", "#04120c"]}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
       style={styles.container}

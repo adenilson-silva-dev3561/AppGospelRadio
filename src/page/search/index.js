@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import Header from "../../components/header";
 import { LinearGradient } from "expo-linear-gradient";
 import GoBack from "../../components/goBack";
 import { Feather } from "@expo/vector-icons";
@@ -50,27 +49,42 @@ function Search() {
 
   return (
     <LinearGradient
-      colors={["#0F9D7A", "#02241c", "#000000"]}
+      colors={["#072a20", "#083226"]}
       start={{ x: 0.5, y: 0 }}
       end={{ x: 0.5, y: 1 }}
       style={styles.container}
     >
       <GoBack />
 
-      <View style={styles.areaInput}>
-        <TextInput
-          value={input}
-          onChangeText={handleSearch}
-          style={styles.input}
-          placeholder="Bucar por uma radio..."
-          placeholderTextColor={"#969393"}
-        />
+      <View style={styles.areaInputWrap}>
+        <View style={styles.searchBox}>
+          <Feather name="search" size={20} color="#b8d9c9" />
+          <TextInput
+            value={input}
+            onChangeText={handleSearch}
+            style={styles.input}
+            placeholder="Buscar por uma rádio..."
+            placeholderTextColor={"#b8d9c9"}
+          />
+          {input.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {
+                setInput("");
+                setRadioSearch([]);
+              }}
+            >
+              <Feather name="x" size={20} color="#b8d9c9" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
+
       <View style={styles.containerRadios}>
         <FlatList
           data={input ? radioSearch : radios}
           showsVerticalScrollIndicator={false}
-          key={({ item }) => item.id}
+          keyExtractor={(item) => item.stationuuid}
+          contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <Radios data={item} />}
         />
       </View>
@@ -84,29 +98,36 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
   },
-  areaInput: {
-    width: "60%",
-    marginTop: 40,
+  areaInputWrap: {
+    width: "95%",
+    alignItems: "center",
+    marginTop: 80,
+  },
+  searchBox: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    height: 50,
-    borderBottomColor: "#dcdcdc",
-    borderBottomWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    backgroundColor: "rgba(255,255,255,0.03)",
+    borderRadius: 12,
   },
   input: {
-    width: "80%",
-    fontSize: 18,
+    flex: 1,
+    marginLeft: 8,
     marginRight: 8,
-    color: "#fff",
-    outlineStyle: "none",
+    fontSize: 16,
+    color: "#eafff3",
   },
 
   containerRadios: {
     width: "95%",
     flex: 1,
     marginTop: 20,
-    borderRadius: 4,
+    borderRadius: 8,
+  },
+  listContent: {
+    paddingBottom: 120,
   },
 });
 

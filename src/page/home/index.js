@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList, StatusBar } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Header from "../../components/header";
 import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
@@ -13,13 +14,18 @@ function Home() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
+    <LinearGradient
+      colors={["#072a20", "#083226"]}
+      style={styles.container}
+      start={{ x: 0.5, y: 0 }}
+      end={{ x: 0.5, y: 1 }}
+    >
+      <StatusBar backgroundColor={"#072a20"} barStyle={"light-content"} />
 
       <Header />
 
       <View style={styles.containerDestaque}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", top: 16 }}>
+        <Text style={{ fontSize: 18, fontWeight: "bold", top: 16, color: '#e7f7ef' }}>
           Ouvindo agora:
         </Text>
 
@@ -43,18 +49,17 @@ function Home() {
       </View>
 
       <View style={styles.containerRadios}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
-          Todas as rádios:
-        </Text>
+        <Text style={styles.sectionTitle}>Todas as rádios</Text>
 
         <FlatList
           data={radios}
           keyExtractor={(item) => item.stationuuid}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
           renderItem={({ item }) => <Radios data={item} />}
         />
       </View>
-    </View>
+    </LinearGradient>
   );
 }
 
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#fff",
+    paddingTop: 30,
   },
 
   containerDestaque: {
@@ -70,25 +75,25 @@ const styles = StyleSheet.create({
   },
 
   continerTocandoAgora: {
-    height: 100,
+    height: 110,
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
-    marginTop: 30,
-    borderRadius: 8,
-    backgroundColor: "#DFF5EC",
-    elevation: 4,
+    padding: 12,
+    marginTop: 24,
+    borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.04)",
+    elevation: 6,
   },
 
   areaIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
+    width: 84,
+    height: 84,
+    borderRadius: 12,
     marginRight: 16,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 4,
-    backgroundColor: "#8de2bf",
+    elevation: 6,
+    backgroundColor: "#0f8f67",
   },
 
   areaInfoMusica: {
@@ -106,7 +111,7 @@ const styles = StyleSheet.create({
   nameRadio: {
     fontSize: 20,
     fontWeight: "800",
-    color: "#285240",
+    color: "#fff",
   },
 
   nameMusic: {
@@ -116,8 +121,19 @@ const styles = StyleSheet.create({
   containerRadios: {
     width: "95%",
     flex: 1,
-    marginTop: 8,
-    borderRadius: 4,
+    marginTop: 12,
+    borderRadius: 8,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#e7f7ef",
+    marginBottom: 8,
+  },
+
+  listContent: {
+    paddingBottom: 120,
   },
 });
 

@@ -15,14 +15,28 @@ const Stack = createNativeStackNavigator();
 
 function TabRoutes() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#04120c',
+          position: 'absolute',
+          borderTopWidth: 0,
+          elevation: 6,
+          shadowColor: '#000',
+          height: 64,
+        },
+        tabBarActiveTintColor: '#e7f7ef',
+        tabBarInactiveTintColor: '#b8d9c9',
+        tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
+      }}
+    >
       <Tab.Screen
         name="Inicio"
         component={home}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="home" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather name="home" size={size} color={focused ? '#e7f7ef' : '#b8d9c9'} />
           ),
         }}
       />
@@ -30,9 +44,8 @@ function TabRoutes() {
         name="Buscar"
         component={Search}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="search" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather name="search" size={size} color={focused ? '#b8d9c9' : '#7fb89a'} />
           ),
         }}
       />
@@ -40,9 +53,8 @@ function TabRoutes() {
         name="Favoritos"
         component={Favorites}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="heart" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather name="heart" size={size} color={focused ? '#fa2c2c' : '#b8d9c9'} />
           ),
         }}
       />
@@ -50,9 +62,8 @@ function TabRoutes() {
         name="Perfil"
         component={Profile}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="user" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather name="user" size={size} color={focused ? '#ffd28a' : '#b8d9c9'} />
           ),
         }}
       />

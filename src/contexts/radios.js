@@ -8,6 +8,7 @@ function ApiProvider({ children }) {
   const [radios, setRadios] = useState([]);
   const [playing, setPlaying] = useState(false);
   const [currentRadio, setCurrentRadio] = useState(null);
+  const [favoriteRadios, setFavoriteRadios] = useState([]);
   const [input, setInput] = useState("");
 
   const player = useAudioPlayer();
@@ -22,28 +23,63 @@ function ApiProvider({ children }) {
     setupAudio();
   }, []);
 
-  async function radiosApi() {
-    try {
-      const response = await api.get("/stations/search", {
-        params: {
-          tag: "gospel",
-          country: "Brazil",
-          hidebroken: true,
-          limit: 75,
-        },
-      });
+  function toggleFavorite(radioId) {
+    const radio = radios.find((radio) => radio.changeuuid === radioId);
 
-      setRadios(response.data);
-    } catch (err) {
-      console.log("Erro ao buscar dados da api: ", err);
+    const isAlreadyFavorite = favoriteRadios.some(
+      (favorite) => favorite.changeuuid === radioId,
+    );
+
+    if (isAlreadyFavorite) {
+      setFavoriteRadios(
+        favoriteRadios.filter((favorite) => favorite.changeuuid !== radioId),
+      );
+    } else {
+      setFavoriteRadios([...favoriteRadios, radio]);
     }
+  }
+
+  async function radiosApi() {
+    const path = "/json/stations/search";
+    const query = {
+      tag: "gospel",
+      country: "Brazil",
+      hidebroken: true,
+      limit: 500,
+    };
+
+    const params = new URLSearchParams(query).toString();
+
+    function isEvangelicalRadio(radio) {
+      const text = `${String(radio.name || "").toLowerCase()} ${String(radio.tags || "").toLowerCase()}`;
+      const isBrazil = String(radio.country || "").toLowerCase() === "brazil";
+      const isGospelOrEvangelical =
+        text.includes("gospel") ||
+        text.includes("evangelic") ||
+        text.includes("evangélica");
+      const isCatholic = text.includes("catholic") || text.includes("catolic");
+      return isBrazil && isGospelOrEvangelical && !isCatholic;
+    }
+
+    try {
+      const response = await api.get(path, { params: query });
+      setRadios(response.data.filter(isEvangelicalRadio));
+      return;
+    } catch (err) {}
+
+    try {
+      const url = `${api.defaults.baseURL}${path}?${params}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`fetch status ${res.status}`);
+      const data = await res.json();
+      setRadios(data.filter(isEvangelicalRadio));
+    } catch (fetchErr) {}
   }
 
   async function playRadio(radio) {
     try {
       const url = radio.urlResolved || radio.url_resolved;
 
-      // mesma rádio
       if (currentRadio?.stationuuid === radio.stationuuid) {
         if (playing) {
           player.pause();
@@ -56,10 +92,7 @@ function ApiProvider({ children }) {
         return;
       }
 
-      // pausa rádio anterior
       player.pause();
-
-      // troca stream
       player.replace({
         uri: url,
       });
@@ -69,7 +102,6 @@ function ApiProvider({ children }) {
       setCurrentRadio(radio);
       setPlaying(true);
     } catch (err) {
-      console.log(err);
       alert("Erro ao reproduzir áudio");
     }
   }
@@ -88,6 +120,9 @@ function ApiProvider({ children }) {
         playRadio,
         input,
         setInput,
+
+        toggleFavorite,
+        favoriteRadios,
       }}
     >
       {children}
