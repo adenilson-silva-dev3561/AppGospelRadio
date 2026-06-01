@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { useAudioPlayer, setAudioModeAsync } from "expo-audio";
 import { api } from "../services/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const ContextApi = createContext([]);
 
@@ -12,6 +13,37 @@ function ApiProvider({ children }) {
   const [input, setInput] = useState("");
 
   const player = useAudioPlayer();
+
+  console.log(favoriteRadios);
+  useEffect(() => {
+    try {
+      async function loadFavoriteRadios() {
+        const storedFavorites = await AsyncStorage.getItem("@favoritesRadios");
+        if (storedFavorites) {
+          const parsedFavorites = JSON.parse(storedFavorites);
+          setFavoriteRadios(parsedFavorites);
+        }
+      }
+      loadFavoriteRadios();
+    } catch (err) {
+      console.log("Erro ao carregar rádios favoritas", err);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      async function saveFavoriteRadios() {
+        await AsyncStorage.setItem(
+          "@favoritesRadios",
+          JSON.stringify(favoriteRadios),
+        );
+      }
+
+      saveFavoriteRadios();
+    } catch (err) {
+      console.log("Erro ao salvar rádios favoritas", err);
+    }
+  }, [favoriteRadios]);
 
   useEffect(() => {
     async function setupAudio() {
