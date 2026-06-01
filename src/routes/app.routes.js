@@ -3,10 +3,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import home from "../page/home";
 
 import { Feather } from "@expo/vector-icons";
-import profile from "../page/profile";
 import Favorites from "../page/favorites";
 import Search from "../page/search";
-import Profile from "../page/profile";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Player from "../page/playerScreen";
 
@@ -19,16 +17,16 @@ function TabRoutes() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#04120c',
-          position: 'absolute',
+          backgroundColor: "#04120c",
+          position: "absolute",
           borderTopWidth: 0,
           elevation: 6,
-          shadowColor: '#000',
+          shadowColor: "#000",
           height: 64,
         },
-        tabBarActiveTintColor: '#e7f7ef',
-        tabBarInactiveTintColor: '#b8d9c9',
-        tabBarLabelStyle: { fontSize: 12, fontWeight: '700' },
+        tabBarActiveTintColor: "#e7f7ef",
+        tabBarInactiveTintColor: "#b8d9c9",
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "700" },
       }}
     >
       <Tab.Screen
@@ -36,7 +34,11 @@ function TabRoutes() {
         component={home}
         options={{
           tabBarIcon: ({ size, color, focused }) => (
-            <Feather name="home" size={size} color={focused ? '#e7f7ef' : '#b8d9c9'} />
+            <Feather
+              name="home"
+              size={size}
+              color={focused ? "#e7f7ef" : "#b8d9c9"}
+            />
           ),
         }}
       />
@@ -45,7 +47,11 @@ function TabRoutes() {
         component={Search}
         options={{
           tabBarIcon: ({ size, color, focused }) => (
-            <Feather name="search" size={size} color={focused ? '#b8d9c9' : '#7fb89a'} />
+            <Feather
+              name="search"
+              size={size}
+              color={focused ? "#b8d9c9" : "#7fb89a"}
+            />
           ),
         }}
       />
@@ -54,16 +60,11 @@ function TabRoutes() {
         component={Favorites}
         options={{
           tabBarIcon: ({ size, color, focused }) => (
-            <Feather name="heart" size={size} color={focused ? '#fa2c2c' : '#b8d9c9'} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Perfil"
-        component={Profile}
-        options={{
-          tabBarIcon: ({ size, color, focused }) => (
-            <Feather name="user" size={size} color={focused ? '#ffd28a' : '#b8d9c9'} />
+            <Feather
+              name="heart"
+              size={size}
+              color={focused ? "#fa2c2c" : "#b8d9c9"}
+            />
           ),
         }}
       />
