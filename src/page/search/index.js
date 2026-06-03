@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
     fontSize: 16,
+    outlineStyle: "none",
     color: "#eafff3",
   },
 

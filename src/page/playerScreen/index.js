@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Share,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -20,13 +21,10 @@ function Player({ route }) {
 
   const routeRadio = route.params?.radio;
   const radio = routeRadio || currentRadio;
-
   const animation = useRef(null);
 
   const isFavorite = radio
-    ? favoriteRadios.some(
-        (favorite) => favorite.changeuuid === radio.changeuuid,
-      )
+    ? favoriteRadios.some((item) => item.changeuuid === radio.changeuuid)
     : false;
 
   useEffect(() => {
@@ -38,31 +36,37 @@ function Player({ route }) {
   }, [playing]);
 
   useEffect(() => {
-    if (routeRadio?.stationuuid && route.params?.autoPlay) {
-      if (currentRadio?.stationuuid !== routeRadio.stationuuid) {
-        playRadio(routeRadio);
-      }
+    if (
+      route.params?.autoPlay &&
+      routeRadio?.stationuuid &&
+      currentRadio?.stationuuid !== routeRadio.stationuuid
+    ) {
+      playRadio(routeRadio);
     }
-  }, [routeRadio?.stationuuid, currentRadio?.stationuuid]);
+  }, [route.params?.autoPlay, routeRadio, currentRadio?.stationuuid]);
 
   function handlePlayPause() {
-    const radioToToggle = currentRadio || routeRadio;
+    if (!radio) return;
 
-    if (!radioToToggle) return;
+    playRadio(radio);
+  }
 
-    playRadio(radioToToggle);
+  async function handleShare() {
+    try {
+      const url = radio.urlResolved || radio.url_resolved || "";
+
+      await Share.share({
+        message: `${radio.name}${url ? "\n" + url : ""}`,
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   if (!radio) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Text style={{ color: '#fff' }}>Nenhuma rádio selecionada</Text>
+      <View style={styles.empty}>
+        <Text style={{ color: "#fff" }}>Nenhuma rádio selecionada</Text>
       </View>
     );
   }
@@ -91,7 +95,6 @@ function Player({ route }) {
             autoPlay
             loop
             style={styles.logoAnim}
-            resizeMode="cover"
           />
 
           <Text style={styles.radioTitle}>{radio.name}</Text>
@@ -106,21 +109,17 @@ function Player({ route }) {
 
         <View style={styles.reaButtons}>
           <FavoriteToggle
+            size={44}
             isFavorite={isFavorite}
             onToggle={() => toggleFavorite(radio.changeuuid)}
-            size={44}
           />
 
           <TouchableOpacity style={styles.buttonPlay} onPress={handlePlayPause}>
             <Feather name={playing ? "pause" : "play"} size={40} color="#fff" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.iconButton}>
+          <TouchableOpacity style={styles.iconButton} onPress={handleShare}>
             <Feather name="share-2" size={26} color="#fff" />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.iconButton}>
-            <Feather name="volume-2" size={26} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
@@ -128,54 +127,53 @@ function Player({ route }) {
   );
 }
 
+export default Player;
+
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+
+  empty: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
 
   areaPlayer: {
-    height: "72%",
-    padding: 18,
+    flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
+    padding: 20,
   },
 
   areaLogo: {
     width: 320,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 18,
-    paddingHorizontal: 18,
     borderRadius: 20,
-    elevation: 10,
-    backgroundColor: "rgba(255,255,255,0.03)",
+    alignItems: "center",
+    padding: 20,
   },
 
   logoAnim: {
     width: 170,
     height: 170,
-    marginBottom: 12,
   },
 
   radioTitle: {
-    fontSize: 22,
-    fontWeight: "800",
     color: "#fff",
+    fontSize: 22,
+    fontWeight: "bold",
     textAlign: "center",
-    marginTop: 6,
   },
 
   aoVivo: {
-    height: 26,
-    borderRadius: 18,
-    marginTop: 10,
-    alignItems: "center",
-    justifyContent: "center",
+    marginTop: 12,
     flexDirection: "row",
-    paddingHorizontal: 10,
-    backgroundColor: "rgba(250,44,44,0.95)",
+    alignItems: "center",
+    backgroundColor: "#fa2c2c",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
 
   liveDot: {
@@ -188,44 +186,36 @@ const styles = StyleSheet.create({
 
   liveText: {
     color: "#fff",
-    fontWeight: "600",
-    fontSize: 12,
   },
 
   textTransmitindo: {
-    fontSize: 16,
-    fontStyle: "italic",
-    fontWeight: "300",
     color: "#c9e9d8",
-    marginTop: 18,
+    marginTop: 20,
   },
 
   reaButtons: {
-    width: 320,
-    justifyContent: "space-between",
     flexDirection: "row",
+    marginTop: 30,
     alignItems: "center",
-    marginTop: 24,
+    justifyContent: "space-between",
+    width: 280,
   },
 
   buttonPlay: {
     width: 90,
     height: 90,
+    borderRadius: 90,
+    backgroundColor: "#1f5f42",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 999,
-    backgroundColor: "#1f5f42",
-    elevation: 6,
   },
 
   iconButton: {
     width: 56,
     height: 56,
+    borderRadius: 56,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: 12,
     backgroundColor: "rgba(255,255,255,0.03)",
   },
 });
-
-export default Player;

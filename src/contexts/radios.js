@@ -10,11 +10,12 @@ function ApiProvider({ children }) {
   const [playing, setPlaying] = useState(false);
   const [currentRadio, setCurrentRadio] = useState(null);
   const [favoriteRadios, setFavoriteRadios] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
 
   const player = useAudioPlayer();
+  const [volume, setVolume] = useState(1);
 
-  console.log(favoriteRadios);
   useEffect(() => {
     try {
       async function loadFavoriteRadios() {
@@ -72,6 +73,7 @@ function ApiProvider({ children }) {
   }
 
   async function radiosApi() {
+    setLoading(true);
     const path = "/json/stations/search";
     const query = {
       tag: "gospel",
@@ -96,6 +98,7 @@ function ApiProvider({ children }) {
     try {
       const response = await api.get(path, { params: query });
       setRadios(response.data.filter(isEvangelicalRadio));
+      setLoading(false);
       return;
     } catch (err) {}
 
@@ -105,7 +108,10 @@ function ApiProvider({ children }) {
       if (!res.ok) throw new Error(`fetch status ${res.status}`);
       const data = await res.json();
       setRadios(data.filter(isEvangelicalRadio));
-    } catch (fetchErr) {}
+      setLoading(false);
+    } catch (fetchErr) {
+      setLoading(false);
+    }
   }
 
   async function playRadio(radio) {
@@ -138,6 +144,50 @@ function ApiProvider({ children }) {
     }
   }
 
+  // Volume control: try multiple APIs depending on player implementation
+  async function setPlayerVolume(value) {
+    const v = Math.max(0, Math.min(1, value));
+    setVolume(v);
+
+    try {
+      if (!player) return;
+
+      // common method names across different player implementations
+      if (typeof player.setVolume === "function") {
+        await player.setVolume(v);
+        return;
+      }
+
+      if (typeof player.setVolumeAsync === "function") {
+        await player.setVolumeAsync(v);
+        return;
+      }
+
+      // expo-av style underlaying sound object
+      if (player.sound && typeof player.sound.setVolumeAsync === "function") {
+        await player.sound.setVolumeAsync(v);
+        return;
+      }
+
+      if (player._sound && typeof player._sound.setVolumeAsync === "function") {
+        await player._sound.setVolumeAsync(v);
+        return;
+      }
+
+      console.log("setPlayerVolume: setVolume API not found on player");
+    } catch (e) {
+      console.log("Erro ao ajustar volume:", e);
+    }
+  }
+
+  function increaseVolume(step = 0.1) {
+    setPlayerVolume((volume || 0) + step);
+  }
+
+  function decreaseVolume(step = 0.1) {
+    setPlayerVolume((volume || 0) - step);
+  }
+
   return (
     <ContextApi.Provider
       value={{
@@ -155,6 +205,13 @@ function ApiProvider({ children }) {
 
         toggleFavorite,
         favoriteRadios,
+
+        // volume controls
+        volume,
+        setPlayerVolume,
+        increaseVolume,
+        decreaseVolume,
+        loading,
       }}
     >
       {children}

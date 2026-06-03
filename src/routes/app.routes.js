@@ -4,7 +4,6 @@ import home from "../page/home";
 
 import { Feather } from "@expo/vector-icons";
 import Favorites from "../page/favorites";
-import Search from "../page/search";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Player from "../page/playerScreen";
 
@@ -17,12 +16,11 @@ function TabRoutes() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#04120c",
+          backgroundColor: " rgba(0, 0, 0, 0.6)",
           position: "absolute",
           borderTopWidth: 0,
           elevation: 6,
           shadowColor: "#000",
-          height: 64,
         },
         tabBarActiveTintColor: "#e7f7ef",
         tabBarInactiveTintColor: "#b8d9c9",
@@ -38,19 +36,6 @@ function TabRoutes() {
               name="home"
               size={size}
               color={focused ? "#e7f7ef" : "#b8d9c9"}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Buscar"
-        component={Search}
-        options={{
-          tabBarIcon: ({ size, color, focused }) => (
-            <Feather
-              name="search"
-              size={size}
-              color={focused ? "#b8d9c9" : "#7fb89a"}
             />
           ),
         }}
