@@ -1,19 +1,15 @@
 import React, { useContext, useState } from "react";
 import { Feather } from "@expo/vector-icons";
+
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { ContextApi } from "../../contexts/radios";
 import FavoriteToggle from "../favoriteToggle";
 
 function Radios({ data }) {
-  const {
-    playRadio,
-    setInput,
-    toggleFavorite,
-    favoriteRadios,
-    heart,
-    setHeart,
-  } = useContext(ContextApi);
+  const { playRadio, setInput, toggleFavorite, favoriteRadios } =
+    useContext(ContextApi);
+
   const navigation = useNavigation();
 
   const isFavorite = favoriteRadios.some(

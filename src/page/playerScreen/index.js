@@ -36,14 +36,16 @@ function Player({ route }) {
   }, [playing]);
 
   useEffect(() => {
-    if (
-      route.params?.autoPlay &&
-      routeRadio?.stationuuid &&
-      currentRadio?.stationuuid !== routeRadio.stationuuid
-    ) {
+    if (!route.params?.autoPlay || !routeRadio) {
+      return;
+    }
+
+    const isSameStation = currentRadio?.stationuuid === routeRadio.stationuuid;
+
+    if (!isSameStation || !playing) {
       playRadio(routeRadio);
     }
-  }, [route.params?.autoPlay, routeRadio, currentRadio?.stationuuid]);
+  }, [route.params?.autoPlay, routeRadio, currentRadio?.stationuuid, playing]);
 
   function handlePlayPause() {
     if (!radio) return;

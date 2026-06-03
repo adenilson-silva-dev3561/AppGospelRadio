@@ -17,40 +17,47 @@ function ApiProvider({ children }) {
   const [volume, setVolume] = useState(1);
 
   useEffect(() => {
-    try {
-      async function loadFavoriteRadios() {
+    async function loadFavoriteRadios() {
+      try {
         const storedFavorites = await AsyncStorage.getItem("@favoritesRadios");
         if (storedFavorites) {
           const parsedFavorites = JSON.parse(storedFavorites);
           setFavoriteRadios(parsedFavorites);
         }
+      } catch (err) {
+        console.log("Erro ao carregar rádios favoritas", err);
       }
-      loadFavoriteRadios();
-    } catch (err) {
-      console.log("Erro ao carregar rádios favoritas", err);
     }
+
+    loadFavoriteRadios();
   }, []);
 
   useEffect(() => {
-    try {
-      async function saveFavoriteRadios() {
+    async function saveFavoriteRadios() {
+      try {
         await AsyncStorage.setItem(
           "@favoritesRadios",
           JSON.stringify(favoriteRadios),
         );
+      } catch (err) {
+        console.log("Erro ao salvar rádios favoritas", err);
       }
+    }
 
+    if (favoriteRadios.length > 0) {
       saveFavoriteRadios();
-    } catch (err) {
-      console.log("Erro ao salvar rádios favoritas", err);
     }
   }, [favoriteRadios]);
 
   useEffect(() => {
     async function setupAudio() {
-      await setAudioModeAsync({
-        shouldPlayInBackground: true,
-      });
+      try {
+        await setAudioModeAsync({
+          shouldPlayInBackground: true,
+        });
+      } catch (err) {
+        console.log("Erro ao configurar áudio", err);
+      }
     }
 
     setupAudio();
@@ -67,7 +74,7 @@ function ApiProvider({ children }) {
       setFavoriteRadios(
         favoriteRadios.filter((favorite) => favorite.changeuuid !== radioId),
       );
-    } else {
+    } else if (radio) {
       setFavoriteRadios([...favoriteRadios, radio]);
     }
   }
