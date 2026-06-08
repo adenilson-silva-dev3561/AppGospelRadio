@@ -5,7 +5,8 @@ import { ContextApi } from "../../contexts/radios";
 import FavoriteToggle from "../favoriteToggle";
 
 function FavoritesRadio({ data }) {
-  const { toggleFavorite, favoriteRadios } = useContext(ContextApi);
+  const { toggleFavorite, favoriteRadios, playRadio, currentRadio, playing } =
+    useContext(ContextApi);
   const navigation = useNavigation();
 
   const isFavorite = favoriteRadios.some(
@@ -13,10 +14,15 @@ function FavoritesRadio({ data }) {
   );
 
   function openPlayer() {
-    navigation.navigate("Player", {
-      radio: data,
-      autoPlay: true,
-    });
+    // se já for a rádio atual e estiver tocando, apenas navegar para Início
+    if (currentRadio?.stationuuid === data.stationuuid && playing) {
+      navigation.navigate("Inicio");
+      return;
+    }
+
+    // caso contrário, tocar rádio e navegar para Início
+    playRadio(data);
+    navigation.navigate("Inicio");
   }
 
   return (

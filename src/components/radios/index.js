@@ -18,10 +18,6 @@ function Radios({ data }) {
 
   async function screenPlayer() {
     await playRadio(data);
-    navigation.navigate("Player", {
-      radio: data,
-      autoPlay: true,
-    });
 
     setInput("");
   }

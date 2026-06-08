@@ -6,6 +6,7 @@ import { Feather } from "@expo/vector-icons";
 import Favorites from "../page/favorites";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Player from "../page/playerScreen";
+import PlayerContent from "../components/PlayerContent";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -16,11 +17,9 @@ function TabRoutes() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: " rgba(0, 0, 0, 0.6)",
-          position: "absolute",
+          backgroundColor: "#000",
           borderTopWidth: 0,
           elevation: 6,
-          shadowColor: "#000",
         },
         tabBarActiveTintColor: "#e7f7ef",
         tabBarInactiveTintColor: "#b8d9c9",
@@ -67,6 +66,11 @@ function AppRoutes() {
       <Stack.Screen
         name="Player"
         component={Player}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PlayerContent"
+        component={PlayerContent}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

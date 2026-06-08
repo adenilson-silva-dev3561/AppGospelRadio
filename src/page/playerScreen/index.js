@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   Share,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
@@ -14,12 +15,13 @@ import LottieView from "lottie-react-native";
 import GoBack from "../../components/goBack";
 import FavoriteToggle from "../../components/favoriteToggle";
 import { ContextApi } from "../../contexts/radios";
+import PlayerContent from "../../components/PlayerContent";
 
 function Player({ route }) {
   const { currentRadio, playing, playRadio, toggleFavorite, favoriteRadios } =
     useContext(ContextApi);
 
-  const routeRadio = route.params?.radio;
+  const routeRadio = route?.params?.radio;
   const radio = routeRadio || currentRadio;
   const animation = useRef(null);
 
@@ -36,7 +38,7 @@ function Player({ route }) {
   }, [playing]);
 
   useEffect(() => {
-    if (!route.params?.autoPlay || !routeRadio) {
+    if (!route?.params?.autoPlay || !routeRadio) {
       return;
     }
 
@@ -66,11 +68,7 @@ function Player({ route }) {
   }
 
   if (!radio) {
-    return (
-      <View style={styles.empty}>
-        <Text style={{ color: "#fff" }}>Nenhuma rádio selecionada</Text>
-      </View>
-    );
+    return <View style={styles.empty}></View>;
   }
 
   return (

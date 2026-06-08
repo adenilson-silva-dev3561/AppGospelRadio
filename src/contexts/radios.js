@@ -98,7 +98,7 @@ function ApiProvider({ children }) {
         text.includes("gospel") ||
         text.includes("evangelic") ||
         text.includes("evangélica");
-      const isCatholic = text.includes("catholic") || text.includes("catolic");
+      const isCatholic = text.includes("catholic") || text.includes("catolica");
       return isBrazil && isGospelOrEvangelical && !isCatholic;
     }
 

@@ -16,6 +16,7 @@ import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
 import { ContextApi } from "../../contexts/radios";
 import { Keyboard } from "react-native";
+import PlayerContent from "../../components/PlayerContent";
 
 function Home() {
   const {
@@ -156,6 +157,17 @@ function Home() {
             )}
           </View>
         </LinearGradient>
+        <View
+          style={{
+            flex: 1,
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+          }}
+        >
+          <PlayerContent radio={currentRadio} />
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
