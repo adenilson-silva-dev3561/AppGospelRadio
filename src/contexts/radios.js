@@ -24,9 +24,7 @@ function ApiProvider({ children }) {
           const parsedFavorites = JSON.parse(storedFavorites);
           setFavoriteRadios(parsedFavorites);
         }
-      } catch (err) {
-        console.log("Erro ao carregar rádios favoritas", err);
-      }
+      } catch (err) {}
     }
 
     loadFavoriteRadios();
@@ -39,9 +37,7 @@ function ApiProvider({ children }) {
           "@favoritesRadios",
           JSON.stringify(favoriteRadios),
         );
-      } catch (err) {
-        console.log("Erro ao salvar rádios favoritas", err);
-      }
+      } catch (err) {}
     }
 
     if (favoriteRadios.length > 0) {
@@ -55,9 +51,7 @@ function ApiProvider({ children }) {
         await setAudioModeAsync({
           shouldPlayInBackground: true,
         });
-      } catch (err) {
-        console.log("Erro ao configurar áudio", err);
-      }
+      } catch (err) {}
     }
 
     setupAudio();
@@ -157,7 +151,6 @@ function ApiProvider({ children }) {
     }
   }
 
-  // Volume control: try multiple APIs depending on player implementation
   async function setPlayerVolume(value) {
     const v = Math.max(0, Math.min(1, value));
     setVolume(v);
@@ -165,7 +158,6 @@ function ApiProvider({ children }) {
     try {
       if (!player) return;
 
-      // common method names across different player implementations
       if (typeof player.setVolume === "function") {
         await player.setVolume(v);
         return;
@@ -176,7 +168,6 @@ function ApiProvider({ children }) {
         return;
       }
 
-      // expo-av style underlaying sound object
       if (player.sound && typeof player.sound.setVolumeAsync === "function") {
         await player.sound.setVolumeAsync(v);
         return;
@@ -186,11 +177,7 @@ function ApiProvider({ children }) {
         await player._sound.setVolumeAsync(v);
         return;
       }
-
-      console.log("setPlayerVolume: setVolume API not found on player");
-    } catch (e) {
-      console.log("Erro ao ajustar volume:", e);
-    }
+    } catch (e) {}
   }
 
   function increaseVolume(step = 0.1) {
@@ -219,7 +206,6 @@ function ApiProvider({ children }) {
         toggleFavorite,
         favoriteRadios,
 
-        // volume controls
         volume,
         setPlayerVolume,
         increaseVolume,

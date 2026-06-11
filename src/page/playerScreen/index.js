@@ -63,7 +63,7 @@ function Player({ route }) {
         message: `${radio.name}${url ? "\n" + url : ""}`,
       });
     } catch (error) {
-      console.log(error);
+      return error;
     }
   }
 

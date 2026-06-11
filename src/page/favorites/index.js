@@ -8,7 +8,6 @@ import { ContextApi } from "../../contexts/radios";
 function Favorites() {
   const { favoriteRadios } = useContext(ContextApi);
 
-  console.log(favoriteRadios.length);
   return (
     <>
       {favoriteRadios.length === 0 ? (
