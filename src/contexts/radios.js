@@ -90,16 +90,22 @@ function ApiProvider({ children }) {
     };
 
     const params = new URLSearchParams(query).toString();
-
     function isEvangelicalRadio(radio) {
       const text = `${String(radio.name || "").toLowerCase()} ${String(radio.tags || "").toLowerCase()}`;
+
       const isBrazil = String(radio.country || "").toLowerCase() === "brazil";
+
       const isGospelOrEvangelical =
         text.includes("gospel") ||
         text.includes("evangelic") ||
         text.includes("evangélica");
+
       const isCatholic = text.includes("catholic") || text.includes("catolica");
-      return isBrazil && isGospelOrEvangelical && !isCatholic;
+
+      const isMelodiaFm =
+        text.includes("melodia fm") || text.includes("melodia 97");
+
+      return isBrazil && isGospelOrEvangelical && !isCatholic && !isMelodiaFm;
     }
 
     try {

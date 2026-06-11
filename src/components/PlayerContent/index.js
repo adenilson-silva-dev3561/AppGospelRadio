@@ -97,7 +97,10 @@ function PlayerContent({ radio, route }) {
           />
 
           <Text
-            style={[styles.radioTitle, { width: "55%", textAlign: "center" }]}
+            style={[
+              styles.radioTitle,
+              { width: "55%", textAlign: "center", fontSize: 16 },
+            ]}
             numberOfLines={1}
           >
             {radioToShow.name}

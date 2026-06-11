@@ -14,7 +14,6 @@ function FavoritesRadio({ data }) {
   );
 
   function openPlayer() {
-    // se já for a rádio atual e estiver tocando, apenas navegar para Início
     if (currentRadio?.stationuuid === data.stationuuid && playing) {
       navigation.navigate("Inicio");
       return;
@@ -32,7 +31,8 @@ function FavoritesRadio({ data }) {
           <Image
             style={styles.logoRadio}
             source={
-              data.favicon
+              data.favicon &&
+              data.favicon === "https://stream.zeno.fm/dapc6eho8szuv"
                 ? { uri: data.favicon }
                 : require("../../../assets/iconRadio.png")
             }
