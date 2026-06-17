@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { View, Text, StyleSheet, FlatList, Image } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import FavoriteHeader from "../../components/favoriteHeader";
+import FocusAwareStatusBar from "../../components/FocusAwareStatusBar";
 import FavoritesRadio from "../../components/favoritesRadio";
 import { ContextApi } from "../../contexts/radios";
 
@@ -10,9 +11,10 @@ function Favorites() {
 
   return (
     <>
+      <FocusAwareStatusBar backgroundColor="#0F9D7A" barStyle="light-content" />
       {favoriteRadios.length === 0 ? (
         <LinearGradient
-          colors={["#0F9D7A", "#02241c", "#04120c"]}
+          colors={["#0F9D7A", "#02241c", "#0F9D7A"]}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
           style={styles.container}

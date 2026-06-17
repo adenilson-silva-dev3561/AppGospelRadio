@@ -5,13 +5,13 @@ import {
   TextInput,
   StyleSheet,
   FlatList,
-  StatusBar,
   TouchableOpacity,
   TouchableWithoutFeedback,
   ActivityIndicator,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Header from "../../components/header";
+import FocusAwareStatusBar from "../../components/FocusAwareStatusBar";
 import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
 import { ContextApi } from "../../contexts/radios";
@@ -64,89 +64,61 @@ function Home() {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={{ flex: 1 }}>
+      {loading ? (
         <LinearGradient
           colors={["#072a20", "#083226"]}
-          style={styles.container}
+          style={styles.containerLoading}
           start={{ x: 0.5, y: 0 }}
           end={{ x: 0.5, y: 1 }}
         >
-          <StatusBar backgroundColor={"#072a20"} barStyle={"light-content"} />
+          <FocusAwareStatusBar
+            backgroundColor="#072a20"
+            barStyle="light-content"
+          />
 
-          <Header />
+          <ActivityIndicator size={50} color={"#fff"} />
+        </LinearGradient>
+      ) : (
+        <View style={{ flex: 1 }}>
+          <LinearGradient
+            colors={["#072a20", "#083226"]}
+            style={styles.container}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+          >
+            <FocusAwareStatusBar
+              backgroundColor="#072a20"
+              barStyle="light-content"
+            />
 
-          <View style={styles.searchArea}>
-            <View style={styles.searchBox}>
-              <Feather name="search" size={20} color="#b8d9c9" />
-              <TextInput
-                value={input}
-                onChangeText={handleSearch}
-                placeholder="Buscar rádio..."
-                placeholderTextColor="#b8d9c9"
-                style={styles.input}
-              />
-              {input.length > 0 && (
-                <TouchableOpacity onPress={() => setInput("")}>
-                  <Feather name="x" size={20} color="#b8d9c9" />
-                </TouchableOpacity>
-              )}
-            </View>
-          </View>
+            <Header />
 
-          {currentRadio ? (
-            <View style={styles.containerDestaque}>
-              <Text style={styles.sectionTitle}>Ouvindo agora</Text>
-
-              <View style={styles.continerTocandoAgora}>
-                <View style={styles.areaIcon}>
-                  <Feather name="radio" size={36} color="#fff" />
-                </View>
-
-                <View style={styles.areaInfoMusica}>
-                  <Text
-                    style={styles.nameRadio}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {currentRadio?.name || "Nenhuma rádio tocando"}
-                  </Text>
-                  <Text style={styles.nameMusic}>
-                    Rádio gospel online ao vivo
-                  </Text>
-                  <View style={styles.liveRow}>
-                    <View style={styles.liveDot} />
-                    <Text style={styles.liveText}>AO VIVO</Text>
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={() => currentRadio && playRadio(currentRadio)}
-                >
-                  <Feather
-                    name={playing ? "pause" : "play"}
-                    size={22}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
+            <View style={styles.searchArea}>
+              <View style={styles.searchBox}>
+                <Feather name="search" size={20} color="#b8d9c9" />
+                <TextInput
+                  value={input}
+                  onChangeText={handleSearch}
+                  placeholder="Buscar rádio..."
+                  placeholderTextColor="#b8d9c9"
+                  style={styles.input}
+                />
+                {input.length > 0 && (
+                  <TouchableOpacity onPress={() => setInput("")}>
+                    <Feather name="x" size={20} color="#b8d9c9" />
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
-          ) : (
-            <View></View>
-          )}
 
-          <View style={styles.containerRadios}>
-            <View style={styles.headerRow}>
-              <Text style={styles.sectionTitle}>Explorar rádios</Text>
-              <Feather name="chevron-down" size={24} color="#b8d9c9" />
-            </View>
+            {/* Seção 'Ouvindo agora' removida: o modal no rodapé já apresenta a faixa em reprodução */}
 
-            {loading ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator size={30} color="#b8d9c9" />
-                <Text style={styles.loadingText}>Carregando rádios...</Text>
+            <View style={styles.containerRadios}>
+              <View style={styles.headerRow}>
+                <Text style={styles.sectionTitle}>Explorar rádios</Text>
+                <Feather name="chevron-down" size={24} color="#b8d9c9" />
               </View>
-            ) : (
+
               <FlatList
                 data={radiosToShow}
                 keyExtractor={(item) => item.stationuuid}
@@ -154,21 +126,21 @@ function Home() {
                 contentContainerStyle={styles.listContent}
                 renderItem={({ item }) => <Radios data={item} />}
               />
-            )}
+            </View>
+          </LinearGradient>
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          >
+            <PlayerContent radio={currentRadio} />
           </View>
-        </LinearGradient>
-        <View
-          style={{
-            flex: 1,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          <PlayerContent radio={currentRadio} />
         </View>
-      </View>
+      )}
     </TouchableWithoutFeedback>
   );
 }
@@ -178,6 +150,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingTop: 30,
+  },
+
+  containerLoading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   searchArea: {

@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef } from "react";
 import {
-  StatusBar,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,6 +8,7 @@ import {
   Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import FocusAwareStatusBar from "../../components/FocusAwareStatusBar";
 import { Feather } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
@@ -78,7 +78,7 @@ function Player({ route }) {
       end={{ x: 0.5, y: 1 }}
       style={styles.container}
     >
-      <StatusBar backgroundColor="#0F9D7A" barStyle="light-content" />
+      <FocusAwareStatusBar backgroundColor="#0F9D7A" barStyle="light-content" />
 
       <GoBack />
 

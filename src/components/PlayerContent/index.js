@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View, Share } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
+import FocusAwareStatusBar from "../FocusAwareStatusBar";
 import { Feather } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 
@@ -58,8 +59,7 @@ function PlayerContent({ radio, route }) {
       await Share.share({
         message: `${radioToShow.name}${url ? "\n" + url : ""}`,
       });
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   function handleToggleFavorite() {
@@ -72,7 +72,8 @@ function PlayerContent({ radio, route }) {
   }
 
   return (
-    <>
+    <View style={{ flex: 1 }}>
+      <FocusAwareStatusBar backgroundColor="#000" barStyle="light-content" />
       {maximized ? (
         <LinearGradient
           colors={["rgba(39, 38, 38, 0.5)", "rgba(0,0,0,0.9)"]}
@@ -81,10 +82,10 @@ function PlayerContent({ radio, route }) {
           style={styles.areaPlayerMinimizado}
         >
           <TouchableOpacity
-            style={[styles.IconMinPlayer]}
+            style={[styles.IconMaxPlayer]}
             onPress={() => setMaximized(!maximized)}
           >
-            <Feather name="chevron-up" size={24} color="#000000" />
+            <Feather name="chevron-up" size={24} color="#ffffff" />
           </TouchableOpacity>
 
           <LottieView
@@ -127,7 +128,7 @@ function PlayerContent({ radio, route }) {
             style={[styles.IconMinPlayer]}
             onPress={() => setMaximized(!maximized)}
           >
-            <Feather name="chevron-down" size={24} color="#000000" />
+            <Feather name="chevron-down" size={30} color="#ffffff" />
           </TouchableOpacity>
 
           <View style={styles.areaLogo}>
@@ -173,7 +174,7 @@ function PlayerContent({ radio, route }) {
           </View>
         </LinearGradient>
       )}
-    </>
+    </View>
   );
 }
 
@@ -183,6 +184,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#1f5f42",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+
     padding: 10,
   },
 
@@ -283,26 +287,27 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.8)",
   },
   IconMaxPlayer: {
-    width: 35,
+    width: 80,
     height: 25,
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
+
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
     top: -25,
-    backgroundColor: "#ffffff",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   IconMinPlayer: {
-    width: 35,
+    width: 80,
     height: 25,
-    borderTopLeftRadius: 50,
-    borderTopRightRadius: 50,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+
     alignItems: "center",
     justifyContent: "center",
     position: "absolute",
-    top: -25,
-    backgroundColor: "#ffffff",
+    top: 0,
   },
   infoRadioTocando: {
     width: "100%",

@@ -19,7 +19,6 @@ function FavoritesRadio({ data }) {
       return;
     }
 
-    // caso contrário, tocar rádio e navegar para Início
     playRadio(data);
     navigation.navigate("Inicio");
   }
@@ -31,8 +30,7 @@ function FavoritesRadio({ data }) {
           <Image
             style={styles.logoRadio}
             source={
-              data.favicon &&
-              data.favicon === "https://stream.zeno.fm/dapc6eho8szuv"
+              data.favicon
                 ? { uri: data.favicon }
                 : require("../../../assets/iconRadio.png")
             }
