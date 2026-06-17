@@ -11,7 +11,7 @@ function GoBack() {
         style={styles.button}
         onPress={() => navigation.goBack()}
       >
-        <Feather name="arrow-left" size={30} color={"#000"} />
+        <Feather name="arrow-left" size={30} color={"#ffffff"} />
       </TouchableOpacity>
     </View>
   );

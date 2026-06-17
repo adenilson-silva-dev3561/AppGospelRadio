@@ -3,36 +3,39 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import home from "../page/home";
 
 import { Feather } from "@expo/vector-icons";
-import profile from "../page/profile";
 import Favorites from "../page/favorites";
-import Search from "../page/search";
-import Profile from "../page/profile";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Player from "../page/playerScreen";
+import PlayerContent from "../components/PlayerContent";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 function TabRoutes() {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#000",
+          borderTopWidth: 0,
+          elevation: 6,
+        },
+        tabBarActiveTintColor: "#e7f7ef",
+        tabBarInactiveTintColor: "#b8d9c9",
+        tabBarLabelStyle: { fontSize: 12, fontWeight: "700" },
+      }}
+    >
       <Tab.Screen
         name="Inicio"
         component={home}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="home" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Buscar"
-        component={Search}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="search" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather
+              name="home"
+              size={size}
+              color={focused ? "#e7f7ef" : "#b8d9c9"}
+            />
           ),
         }}
       />
@@ -40,19 +43,12 @@ function TabRoutes() {
         name="Favoritos"
         component={Favorites}
         options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="heart" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Perfil"
-        component={Profile}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ size, color }) => (
-            <Feather name="user" size={size} color={color} />
+          tabBarIcon: ({ size, color, focused }) => (
+            <Feather
+              name="heart"
+              size={size}
+              color={focused ? "#fa2c2c" : "#b8d9c9"}
+            />
           ),
         }}
       />
@@ -70,6 +66,11 @@ function AppRoutes() {
       <Stack.Screen
         name="Player"
         component={Player}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PlayerContent"
+        component={PlayerContent}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
