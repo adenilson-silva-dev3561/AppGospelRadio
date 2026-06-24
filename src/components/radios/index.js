@@ -1,24 +1,25 @@
-import React, { useState } from "react";
-
+import React, { useContext, useState } from "react";
 import { Feather } from "@expo/vector-icons";
-import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 
+import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { ContextApi } from "../../contexts/radios";
+import FavoriteToggle from "../favoriteToggle";
 
 function Radios({ data }) {
-  const [heart, setHeart] = useState(false);
+  const { playRadio, setInput, toggleFavorite, favoriteRadios } =
+    useContext(ContextApi);
 
   const navigation = useNavigation();
 
-  function favoritar() {
-    setHeart(!heart);
-  }
+  const isFavorite = favoriteRadios.some(
+    (favorite) => favorite.changeuuid === data.changeuuid,
+  );
 
-  function screenPlayer() {
-    navigation.navigate("Player", {
-      radio: data,
-      autoPlay: true,
-    });
+  async function screenPlayer() {
+    await playRadio(data);
+
+    setInput("");
   }
 
   return (
@@ -35,15 +36,22 @@ function Radios({ data }) {
                 ? { uri: data.favicon }
                 : require("../../../assets/iconRadio.png")
             }
+            resizeMode="cover"
           />
         </View>
 
-        <Text>{data.name}</Text>
+        <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+          {data.name}
+        </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={favoritar}>
-        <Feather name="heart" size={30} color={heart ? "red" : "#dcdcdc"} />
-      </TouchableOpacity>
+      <View style={styles.areaFavoritar}>
+        <FavoriteToggle
+          isFavorite={isFavorite}
+          onToggle={() => toggleFavorite(data.changeuuid)}
+          size={36}
+        />
+      </View>
     </View>
   );
 }
@@ -54,15 +62,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    elevation: 2,
-    backgroundColor: "#ffffff",
-    padding: 4,
-    borderRadius: 10,
-    marginTop: 8,
+    elevation: 0,
+    backgroundColor: "rgba(255,255,255,0.04)",
+    padding: 12,
+    borderRadius: 12,
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.06)",
   },
 
   containerNameRadio: {
-    width: "90%",
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
   },
@@ -75,11 +85,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 16,
   },
-
+  areaFavoritar: {
+    marginLeft: 8,
+  },
   logoRadio: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#fff",
+    flexShrink: 1,
   },
 });
 

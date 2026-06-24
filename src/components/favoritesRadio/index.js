@@ -1,35 +1,57 @@
-import React, { useState } from "react";
-
-import { Feather } from "@expo/vector-icons";
+import React, { useContext } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { ContextApi } from "../../contexts/radios";
+import FavoriteToggle from "../favoriteToggle";
 
 function FavoritesRadio({ data }) {
-  const [heart, setHeart] = useState(null);
-
+  const { toggleFavorite, favoriteRadios, playRadio, currentRadio, playing } =
+    useContext(ContextApi);
   const navigation = useNavigation();
-  function favoritar() {
-    setHeart(!heart);
+
+  const isFavorite = favoriteRadios.some(
+    (favorite) => favorite.changeuuid === data.changeuuid,
+  );
+
+  function openPlayer() {
+    if (currentRadio?.stationuuid === data.stationuuid && playing) {
+      navigation.navigate("Inicio");
+      return;
+    }
+
+    playRadio(data);
+    navigation.navigate("Inicio");
   }
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.containerNameRadio}
-        onPress={() => navigation.navigate("Player")}
-      >
+      <TouchableOpacity style={styles.containerNameRadio} onPress={openPlayer}>
         <View style={styles.areaLogo}>
-          <Image style={styles.logoRadio} source={{ uri: data.image }} />
+          <Image
+            style={styles.logoRadio}
+            source={
+              data.favicon
+                ? { uri: data.favicon }
+                : require("../../../assets/iconRadio.png")
+            }
+          />
         </View>
-        <Text>{data.name}</Text>
+
+        <View style={styles.infoArea}>
+          <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
+            {data.name}
+          </Text>
+          <Text style={styles.meta}>{data.country || "Brasil"}</Text>
+        </View>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={favoritar}>
-        <Feather
-          name="heart"
-          size={30}
-          color={heart === true ? "red" : "#dcdcdc"}
+      <View style={styles.areaFavoritar}>
+        <FavoriteToggle
+          isFavorite={isFavorite}
+          onToggle={() => toggleFavorite(data.changeuuid)}
+          size={28}
         />
-      </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -40,12 +62,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    backgroundColor: "transparent",
-    padding: 4,
+    backgroundColor: "rgba(255,255,255,0.04)",
+    padding: 12,
+    marginTop: 10,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: "#747171",
-    marginTop: 8,
-    borderRadius: 10,
+    borderColor: "rgba(255,255,255,0.06)",
   },
 
   containerNameRadio: {
@@ -56,20 +78,43 @@ const styles = StyleSheet.create({
   },
 
   areaLogo: {
-    width: 80,
-    height: 80,
+    width: 64,
+    height: 64,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: 8,
-    marginRight: 16,
+    marginRight: 12,
+  },
+
+  areaFavoritar: {
+    marginRight: 6,
   },
 
   logoRadio: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    objectMode: "contain",
-    marginRight: 16,
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+  },
+
+  lottie: {
+    width: 48,
+    height: 48,
+  },
+
+  infoArea: {
+    justifyContent: "center",
+  },
+
+  title: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#fff",
+  },
+
+  meta: {
+    fontSize: 12,
+    color: "#cfcfcf",
   },
 });
+
 export default FavoritesRadio;

@@ -1,58 +1,147 @@
-import React, { useContext, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, StatusBar } from "react-native";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+} from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import Header from "../../components/header";
+import FocusAwareStatusBar from "../../components/FocusAwareStatusBar";
 import { Feather } from "@expo/vector-icons";
 import Radios from "../../components/radios";
 import { ContextApi } from "../../contexts/radios";
+import { Keyboard } from "react-native";
+import PlayerContent from "../../components/PlayerContent";
 
 function Home() {
-  const { radios, radiosApi } = useContext(ContextApi);
+  const {
+    radios,
+    radiosApi,
+    currentRadio,
+    input,
+    setInput,
+    playRadio,
+    playing,
+    loading,
+  } = useContext(ContextApi);
+  const [radioSearch, setRadioSearch] = useState([]);
 
   useEffect(() => {
     radiosApi();
   }, []);
 
-  console.log(radios);
+  useEffect(() => {
+    if (!input) {
+      setRadioSearch([]);
+      return;
+    }
+
+    const filtered = radios.filter((radio) =>
+      removerAcentos(radio.name || "")
+        .toLowerCase()
+        .includes(removerAcentos(input).toLowerCase().trim()),
+    );
+
+    setRadioSearch(filtered);
+  }, [input, radios]);
+
+  function removerAcentos(text) {
+    return text.normalize("NFD").replace(/([\u0300-\u036f])/g, "");
+  }
+
+  function handleSearch(valor) {
+    setInput(valor);
+  }
+
+  const radiosToShow = useMemo(() => {
+    return input ? radioSearch : radios;
+  }, [input, radioSearch, radios]);
+
   return (
-    <View style={styles.container}>
-      <StatusBar backgroundColor={"#0F9D7A"} barStyle={"dark-content"} />
-      <Header />
-      <View style={styles.containerDestaque}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", top: 16 }}>
-          Ouvindo agora:
-        </Text>
-        <View style={styles.continerTocandoAgora}>
-          <View style={styles.areaIcon}>
-            <Feather name="radio" size={80} color={"#fff"} />
-          </View>
-          <View style={styles.areaInfoMusica}>
-            <View style={styles.containerTitleRadio}>
-              <Text style={styles.nameRadio}>Gospel FM ao vivo</Text>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      {loading ? (
+        <LinearGradient
+          colors={["#072a20", "#083226"]}
+          style={styles.containerLoading}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+        >
+          <FocusAwareStatusBar
+            backgroundColor="#072a20"
+            barStyle="light-content"
+          />
+
+          <ActivityIndicator size={50} color={"#fff"} />
+        </LinearGradient>
+      ) : (
+        <View style={{ flex: 1 }}>
+          <LinearGradient
+            colors={["#072a20", "#083226"]}
+            style={styles.container}
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 1 }}
+          >
+            <FocusAwareStatusBar
+              backgroundColor="#072a20"
+              barStyle="light-content"
+            />
+
+            <Header />
+
+            <View style={styles.searchArea}>
+              <View style={styles.searchBox}>
+                <Feather name="search" size={20} color="#b8d9c9" />
+                <TextInput
+                  value={input}
+                  onChangeText={handleSearch}
+                  placeholder="Buscar rádio..."
+                  placeholderTextColor="#b8d9c9"
+                  style={styles.input}
+                />
+                {input.length > 0 && (
+                  <TouchableOpacity onPress={() => setInput("")}>
+                    <Feather name="x" size={20} color="#b8d9c9" />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-            <View style={styles.containerNameMusicTocando}>
-              <Text style={styles.nameMusic}>
-                <Text style={{ fontWeight: "bold" }}>Tocando agora:</Text>{" "}
-                Felipe Rodrigues - Tudo é Perda{" "}
-              </Text>
+
+            {/* Seção 'Ouvindo agora' removida: o modal no rodapé já apresenta a faixa em reprodução */}
+
+            <View style={styles.containerRadios}>
+              <View style={styles.headerRow}>
+                <Text style={styles.sectionTitle}>Explorar rádios</Text>
+                <Feather name="chevron-down" size={24} color="#b8d9c9" />
+              </View>
+
+              <FlatList
+                data={radiosToShow}
+                keyExtractor={(item) => item.stationuuid}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={styles.listContent}
+                renderItem={({ item }) => <Radios data={item} />}
+              />
             </View>
+          </LinearGradient>
+          <View
+            style={{
+              flex: 1,
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+            }}
+          >
+            <PlayerContent radio={currentRadio} />
           </View>
         </View>
-      </View>
-
-      {/* todas as radios */}
-      <View style={styles.containerRadios}>
-        <Text style={{ fontSize: 18, fontWeight: "bold", marginBottom: 8 }}>
-          Todas as rádios:
-        </Text>
-
-        <FlatList
-          data={radios}
-          showsVerticalScrollIndicator={false}
-          key={({ item }) => item.id}
-          renderItem={({ item }) => <Radios data={item} />}
-        />
-      </View>
-    </View>
+      )}
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -60,59 +149,159 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#fff",
+    paddingTop: 30,
+  },
+
+  containerLoading: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  searchArea: {
+    width: "95%",
+    marginBottom: 10,
+  },
+
+  searchBox: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    backgroundColor: "rgba(255,255,255,0.06)",
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.08)",
+  },
+
+  input: {
+    flex: 1,
+    marginLeft: 12,
+    marginRight: 12,
+    fontSize: 16,
+    color: "#e7f7ef",
   },
 
   containerDestaque: {
     width: "95%",
+    marginBottom: 16,
   },
-  continerTocandoAgora: {
-    height: 100,
+
+  headerRow: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
-    padding: 8,
-    marginTop: 30,
-    borderRadius: 8,
-    backgroundColor: "#DFF5EC",
+    justifyContent: "space-between",
+    marginBottom: 12,
+  },
+
+  continerTocandoAgora: {
+    minHeight: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 16,
+    borderRadius: 18,
+    backgroundColor: "rgba(35, 78, 62, 0.94)",
+    borderWidth: 1,
+    borderColor: "rgba(49, 214, 136, 0.2)",
     elevation: 4,
   },
 
   areaIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
+    width: 74,
+    height: 74,
+    borderRadius: 18,
     marginRight: 16,
-    elevation: 4,
-    backgroundColor: "#8de2bf",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(49, 214, 136, 0.18)",
   },
 
-  containerTitleRadio: {},
   areaInfoMusica: {
-    width: "70%",
-    padding: 4,
-    borderBottomColor: "#8de2bf",
+    flex: 1,
   },
 
-  containerNameMusicTocando: {
-    borderTopWidth: 1,
-    borderTopColor: "#89dab8",
-    marginTop: 12,
-    paddingTop: 4,
-  },
   nameRadio: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "800",
-    color: "#285240",
+    color: "#fff",
+    marginBottom: 6,
   },
+
   nameMusic: {
     fontSize: 12,
+    color: "#d7e8db",
+    marginBottom: 8,
+  },
+
+  liveRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  liveDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#00cf4f",
+    marginRight: 8,
+  },
+
+  liveText: {
+    color: "#00cf4f",
+    fontSize: 12,
+    fontWeight: "700",
+  },
+
+  controlButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.08)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  liveBadge: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    backgroundColor: "rgba(49, 214, 136, 0.16)",
+    color: "#b8d9c9",
+    fontWeight: "700",
+    borderRadius: 999,
+    fontSize: 12,
+    letterSpacing: 0.5,
   },
 
   containerRadios: {
     width: "95%",
     flex: 1,
-    marginTop: 8,
-    borderRadius: 4,
+    marginBottom: 12,
+  },
+
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#e7f7ef",
+  },
+
+  listContent: {
+    paddingBottom: 140,
+  },
+
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 40,
+  },
+
+  loadingText: {
+    color: "#b8d9c9",
+    fontSize: 14,
+    marginTop: 16,
+    fontWeight: "500",
   },
 });
 
